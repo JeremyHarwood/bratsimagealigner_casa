@@ -15,52 +15,60 @@ import numpy as np
 #from astropy.io import fits
 
 
-class Setup:
+class _Constants:
+    _MAX_MODES = 2
+    _REFERENCE_ROUNDING_ACCURACY = 2
 
-    def __init__(self, input_files: list, output_dir: str, region_files:list):
-        try :
-            self.__set_input(input_files)
-            self.__set_output(output_dir)
-            self.__set_regions(region_files)
-            self.mode = 2
-            self.ref_image = 0
-            self.ref_location = [1024.0, 1024.0]
-        except ValueError as e:
-            print('\n*** ValueError: ' + str(e) + ' ***\n')
-        except FileNotFoundError as e:
-            print('\n*** FileNotFoundError: ' + str(e) + ' ***\n')
-        except EOFError as e:
-            print('\n*** EOFError: ' + str(e) + ' ***\n')
-        except NotADirectoryError as e:
-            print('\n*** NotADirectoryError: ' + str(e) + ' ***\n')
-        except (KeyboardInterrupt, SystemExit):
-            print('\n*** KeyboardInterrupt: User interupt detected. Exiting the program.... ***\n')
-            raise
-        except Exception as e:
-            print('\n*** Exception: ' + str(e) + ' ***\n')
+class Setup(_Constants):
 
-    # Error check and set the input file list
-    def __set_input(self, __input_files):
+    def __init__(self, input_files:list, output_dir:str, region_files:list, mode=2, reference_image=0, reference_location=[1024.0, 1024.0]):
+        _Setters._set_input(self, input_files)
+        _Setters._set_output(self, output_dir)
+        _Setters._set_regions(self, region_files)
+        _Setters._set_mode(mode)
+        _Setters._set_reference_image(reference_image)
+        _Setters._set_reference_location(reference_location)
+
+    def set_mode(self, mode:int):
+        _Setters._set_mode(mode)
+
+    def set_reference_image(self, mode:int):
+        _Setters._set_reference_image(reference_image)
+
+    def set_reference_location(self, reference_location:int):
+        _Setters._set_reference_location(reference_location)
+
+# Setter class for setting and updating parameters
+class _Setters(Setup):
+
+    #def __init__(self):
+    #    super(__Setters, self).__init__()
+
+    def _set_input(self, __input_files):
         if len(__input_files) == 0:
-            raise ValueError('Input files list cannot be empty!')
+            raise IndexError('Input files list cannot be empty!')
         else:
             for file in __input_files:
-               if not file.strip():
+                if not file.strip():
                    raise ValueError('The input files list contains a blank element. All elements must contain a valid value.')
-               elif not os.path.isfile(file):
-                   raise FileNotFoundError('The input file %s does not exist. Please ensure all paths are correct.' % (file))
+                elif len(glob.glob(file)) == 0:
+                    raise FileNotFoundError('Unable to locate any valid files matching %s.' % (file))
+                elif file.rfind('/') == -1:
+                    var_input[i] = './' + var_input[i] # Standardise the path format to make maniulation safer and easier to manage
+
             self._input = [__input_files]
 
-    def __set_output(self, __output_directory):
+    def _set_output(self, __output_directory):
         if not __output_directory:
             raise EOFError('Output directory string cannot be empty!')
-        else:
-            if not os.path.isdir(__output_directory):
-                   raise NotADirectoryError('The output directory %s does not exist. Please ensure the path is correct.' % (file))
-            self._output = [__output_directory]
+        elif not os.path.isdir(__output_directory):
+            raise NotADirectoryError('The output directory %s does not exist. Please ensure the path is correct.' % (file)
+        elif __output_directory[len(__output_directory)-1] != '/':   # Standardise the path format to make maniulation safer and easier to manage
+            __output_directory += '/'
 
-    # Error check and set the region files list
-    def __set_regions(self, __region_files):
+        self._output = [__output_directory]
+
+    def _set_regions(self, __region_files):
         if len(__region_files) == 1:
             self._regions = [__region_files[0]] * len(self._input)
         elif len(__region_files) == len(self._input):
@@ -71,32 +79,37 @@ class Setup:
                    raise FileNotFoundError('The region file %s does not exist. Please ensure all paths are correct.' % (file))
             self._regions = [__region_files]
         elif len(__region_files) == 0:
-            raise ValueError('Region files list cannot be empty!')
+            raise IndexError('Region files list cannot be empty!')
         else:
-            raise ValueError('Region files list must be equal to either the number of images or to one [Regions: %i Images: %i]' % (len(__region_files), len(self._input)) )
+            raise IndexError('Region files list must be equal to either the number of images or to one [Regions: %i Images: %i]' % (len(__region_files), len(self._input)) )
 
-    
-    ### TODO ###
+    def _set_mode(__mode):
+        if not 0 <= __mode < self._MAX_MODES:
+            raise ValueError('Modes must be in the range 0 and %i' % (self._MAX_MODES))
+        self._mode = __mode
 
-    #Set mode
+    def _set_reference_image(__reference_image):
+        if not 0 <= __reference_image < len(self._input):
+            raise IndexError('Reference image must be an index between 0 and %d' % (len(self._input)-1))
+        self._reference_image = __reference_image
 
-    #Set reference image
+    def _set_reference_location(__reference_location):
+        if not 0 <= len(__reference_location) < 2:
+            raise IndexError('Reference location must be a list containing 2 element (currently %d)' % (len(__reference_location)))
+        self._reference_location = __reference_location
 
-    #Set reference location
+class _core(Setup):
 
+    def _align(self):
 
+        if self._mode == 0:
 
-    #def execfile(self, file_loc: str) -> dict:
-    #    return _Script._execfile(self, file_loc)
+            print('Determining the reference coordinates (predefined image)...')
+            __reference_fitting_file =  glob.glob(self._input[_reference_image])[0]
+            __gaussfit=imfit(imagename=__reference_fitting_file, region=self._regions[_reference_image], dooff=True)
+            __reference_x, __reference_y = dict_gaussfit['results']['component0']['pixelcoords'].round(_REFERENCE_ROUNDING_ACCURACY)
+            print('Aligning to reference coordinates: {:.2f}'.format(__reference_x) + ', {:.2f}'.format(__reference_y))
 
-    #def multiexec(self, file_list: list, num_proc: int) -> dict:
-    #    return _Multiexec._multiexec(self, file_list, num_proc)
-
-
-
-#class align(Setup):
-
-#    if len(var_input) == len(var_region):
 
 ################################################################################################################
 ########                                                                                                 #######
@@ -104,36 +117,6 @@ class Setup:
 ########                                                                                                 #######
 ################################################################################################################
 
-
-## Do some error checking and correction before we begin
-#if len(var_input) != len(var_region):
-#    sys.exit('Error: The list length of var_input and var_region do not match. Please check and try again. Exiting...')
-
-#if os.path.isdir(var_output):
-#    print('Sucessfully found output directory...')
-    
-#else:
-#    try:
-#        print('Output directory not found. Attempting to create it...')
-#        os.makedirs(var_output)
-#        print('Success!')
-#    except:
-#        traceback.print_exc()
-#        sys.exit('Error: Unable to find or create the output directory. Please check permission and try again. Exiting...')
-
-#for i in range(len(var_input)):
-#    if var_input[i].rfind('/') == -1:
-#        var_input[i] = './' + var_input[i]
-#        print('Adjusting input')
-
-#if var_output[len(var_output)-1] != '/':   
-#    var_output = var_output + '/'
-#    print('Adjusting output')
-
-## Check all the input directories contain valid files
-#for file in var_input:
-#    if len(glob.glob(file)) == 0:
-#        sys.exit('Error: Unable to locate any valid file in ' + file + '. Please check var_input and try again. Exiting...')
 
 #imgnum = 0
 
@@ -261,4 +244,3 @@ class Setup:
 #    res_mean_offsety /= imgnum
     
 #    print('Mean offset (after shift) {:.3g}:'.format(res_mean_offsetx) + ', {:.3g}'.format(res_mean_offsety))
-
