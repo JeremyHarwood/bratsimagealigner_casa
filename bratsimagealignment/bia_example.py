@@ -25,7 +25,7 @@ import bratsalign as bia
 # List of paths and file names of the images to align. Use '*' for all files. First element of list used for reference pixel determination.
 #var_input = ['./path/to/some/fits/files/*.fits',  './path/to/some/more/fits/files/*.fits', './path/to/some/even/more/fits/files/*.fits'] 
 #var_input = ['./path/to/some/fits/files/*.fits',  './path/to/some/more/fits/files/*.fits']
-var_input = ['./testimages/*.fits']
+var_input = ['./testimages/*.fits', './testimages_1/*.fits']
 var_output = './output' # Path to directory for the output images
 #var_region = ['aregionfile.crtf', './pathtoanother/regionfile.crtf', 'aregionfile.crtf'] # List of regions files. Casa format, one per input (can be the same, or different if significantly shifted)
 #var_region = ['aregionfile.crtf', './pathtoanother/regionfile.crtf'] # List of regions files. Casa format, one per input (can be the same, or different if significantly shifted)
