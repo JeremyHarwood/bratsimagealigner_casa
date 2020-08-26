@@ -1,0 +1,47 @@
+****** Fit performed at Wed Aug 26 14:41:23 2020******
+
+Input parameters ---
+       --- imagename:           /home/jharwood/brats_align/3c438_b/3C438_Target_2to65_FULLBW_B_ARRAY.fits
+       --- region:              
+       --- channel:             0
+       --- stokes:              I
+       --- mask:                
+       --- include pixel range: []
+       --- exclude pixel range: []
+*** Details of fit for channel number 0
+Number of pixels used in fit: 185
+Input and residual image statistics (to be used as a rough guide only as to goodness of fit)
+       --- Standard deviation of input image: 0.00257455 Jy
+       --- Standard deviation of residual image: 9.07519e-05 Jy
+       --- RMS of input image: 0.00294811 Jy
+       --- RMS of residual image: 9.39197e-05 Jy
+
+Zero level offset fit: -0.00016317 +/- 8.54037e-06 Jy/beam
+Fit on 3C438_Target_2to65_FULLBW_B_ARRAY.fits component 0
+Position ---
+       --- ra:    21:55:52.289872 +/- 0.000076 s (0.000893 arcsec along great circle)
+       --- dec: +038.00.29.599446 +/- 0.000890 arcsec
+       --- ra:  512.028 +/- 0.017 pixels
+       --- dec: 511.990 +/- 0.016 pixels
+
+Image component size (convolved with beam) ---
+       --- major axis FWHM:     261.1 +/- 2.1 marcsec
+       --- minor axis FWHM:     258.4 +/- 2.1 marcsec
+       --- position angle: 131 +/- 32 deg
+
+Clean beam size ---
+       --- major axis FWHM: 0.27 arcsec
+       --- minor axis FWHM: 0.27 arcsec
+       --- position angle: 0.00 deg
+Image component size (deconvolved from beam) ---
+    Component is a point source
+    An upper limit on its size cannot be determined
+
+Flux ---
+       --- Integrated:   10.54 +/- 0.15 mJy
+       --- Peak:         11.385 +/- 0.092 mJy/beam
+       --- Polarization: I
+
+Spectrum ---
+      --- frequency:        22.19657 GHz (1.350625 cm)
+

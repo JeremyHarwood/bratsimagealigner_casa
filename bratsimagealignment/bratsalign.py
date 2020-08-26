@@ -64,7 +64,7 @@ class Setup(_Constants):
     def set_mode(self, mode:int):
         _Setters._set_mode(self, mode)
 
-    def set_reference_image(self, mode:int):
+    def set_reference_image(self, reference_image:int):
         _Setters._set_reference_image(self, reference_image)
 
     def set_reference_location(self, reference_location:int):
@@ -122,7 +122,7 @@ class _Setters(Setup):
                    raise ValueError('The region files list contains a blank element. All elements must contain a valid value.')
                elif not os.path.isfile(file):
                    raise FileNotFoundError('The region file %s does not exist. Please ensure all paths are correct.' % (file))
-            self._regions = [__region_files]
+            self._regions = __region_files
         elif len(__region_files) == 0:
             raise IndexError('Region files list cannot be empty!')
         else:
@@ -191,7 +191,7 @@ class _Core(Setup):
             print('Using a predefined image for the reference coordinates')
             __reference_fitting_file = self._input[self._reference_image][0]
             self.__commands.append("__gauss_fit = imfit(imagename=\'" + __reference_fitting_file + "\', region=\'" + str(self._regions[self._reference_image]) + "\', logfile=\'" + self._output + "reference_coords.txt\', dooff=True, append=False)")
-            self.__commands.append("__reference_x, __reference_y = __gauss_fit['results']['component0']['pixelcoords'].round(_REFERENCE_ROUNDING_ACCURACY")           
+            self.__commands.append("__reference_x, __reference_y = __gauss_fit['results']['component0']['pixelcoords'].round(" + str(self._REFERENCE_ROUNDING_ACCURACY) + ")")           
         elif self._mode == 1:
             print('Using a fixed reference of {:.2f}'.format(_reference_location[0]) + ', {:.2f}'.format(_reference_location[1]) + " for alignment")
             self.__commands.append("__reference_x, __reference_y = " + str(_reference_location))
@@ -235,7 +235,7 @@ class _Core(Setup):
         _Core._return_reference(self)
 
     def _get_residual_positions(self, __return_file_name, __get_reference):
-        self.__commands.append("print(\'Performing initial Gaussian fitting...\')")
+        self.__commands.append("print(\'Performing residual Gaussian fitting...\')")
         self.__commands.extend(["__x_positions = []", "__y_positions = []"])
         self.__commands.append("for file in __input:")
         self.__commands.append("\tif not file.upper().endswith(\'.FITS\'):")
@@ -258,14 +258,6 @@ class _Core(Setup):
         self.__commands.append("with open(\'"+ self._output + self._CASA_DATA_FILES_PREFIX + "references.data\', \'ab\') as __reference_file:")
         self.__commands.append("\tpickle.dump(__reference_positions, __reference_file)")
 
-    #def _read_positions(self):
-    #    with open(self._CASA_POSITIONS_FILE_NAME, 'rb') as __positions_file:
-    #        __positions = pickle.load(__positions_file, fix_imports=True, encoding="bytes")
-    #    __x_positions = __positions[0]
-    #    __y_positions = __positions[1]
-    #    print("\n\n" + str(__x_positions) + "\n\n" + str(__y_positions))
-
-
     ##### EXPORT INDIVIDUAL RESIDUALS TO FILE? PER IMAGE? PER SET? ######
     def _get_residuals(self):
         __min_residual_x = __min_residual_y = 1e9
@@ -274,8 +266,6 @@ class _Core(Setup):
 
         with open(self._output + self._CASA_DATA_FILES_PREFIX + "aligned_positions.data", 'rb') as __aligned_positions_file:
             __aligned_positions = pickle.load(__aligned_positions_file, fix_imports=True, encoding="bytes")
-
-        print(__aligned_positions)
 
         for index in range(len(self._aligned_files)):
             __residual_x = self._reference_position[0] - __aligned_positions[0][index] # _reference_position set during _perform_shift
@@ -304,6 +294,7 @@ class _Core(Setup):
 
     def _perform_shift(self):
         ####### TODO: CHECK THESE FILES EXIST; OUTPUT OFFSET RESULTS TO FILE #######
+        print("Aligning images...")
         with open(self._output + self._CASA_DATA_FILES_PREFIX + "positions.data", 'rb') as __positions_file:
             __positions = pickle.load(__positions_file, fix_imports=True, encoding="bytes")
 
@@ -327,6 +318,8 @@ class _Core(Setup):
                 __max_offset_y = abs(__offset_y) if abs(__offset_y) > abs(__max_offset_y) else __max_offset_y
 
                 __image_data, __image_hdr = fits.getdata(self._input[index][file_index], 0, header=True)
+                np.nan_to_num(__image_data, copy=False) # Replace any NaNs so we can interpolate
+
                 __degenerate_axis = __image_data.ndim - 2 # See how many degenerate axis we have so we can add them back later
                 __squeezed_image = __image_data.squeeze() # We need to squeeze any degenerate axis. This shouldn't be a problem in general but may in specific cases.
                 __aligned_image = np.zeros(__squeezed_image.shape)
@@ -340,9 +333,9 @@ class _Core(Setup):
                 __output_file = self._output + self._input[index][file_index][__directory_index+1:__extension_index] + '_aligned' + self._input[index][file_index][__extension_index:]
                 self._aligned_files.append(__output_file)
                 fits.writeto(filename=__output_file, data=__aligned_image, header=__image_hdr, overwrite=True)
-
+                
             __mean_offset_x = __sum_offset_x/len(self._input[index])
-            __mean_offset_y = __sum_offset_x/len(self._input[index])
+            __mean_offset_y = __sum_offset_y/len(self._input[index])
 
             __directory_index = self._input[index][file_index].rfind('/') 
             __file_descriptor = (self._input[index][file_index][:__directory_index+1] + "*.fits") if len(self._input[index]) > 1 else self._input[index][0]
@@ -357,7 +350,6 @@ class _Core(Setup):
         self.__commands_file = open(self._CASA_COMMANDS_FILE_NAME, "w")
         self.__commands_file.write(self._CASA_HEADER + "\n")
         for command in self.__commands:
-            #print(command)
             self.__commands_file.write("\n" + command)
         self.__commands_file.write("\n")
         self.__commands_file.close()
