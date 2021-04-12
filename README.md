@@ -28,3 +28,9 @@ standard manner (#import bratsalign_casa).
 
 See bia_casa_example.py and accompanying .fits files for example usage.
 
+## Known issues
+On certain setups when using certain version combinations of CASA and Python, it is possible that CASA will not run automatically due to a Python path conflict. In such cases, it is recommended to run the Python script created by bratsimagealigner manually. Note that the final alignment checking will not be done in such cases and should be checked by hand by the user on completion.
+
+
+
+
