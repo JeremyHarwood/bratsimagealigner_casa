@@ -1,4 +1,4 @@
-# bratsimagealigner_casa
+# BRATS Image Aligner (CASA Version)
 
 Automatic pixel-based alignment tool for radio images for use in the creation of spectral ageing and spectral index maps.
 
