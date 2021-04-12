@@ -36,7 +36,7 @@ import traceback
 import bratsalign_casa as bia
 
 # List of paths and file names of the images to align. Use '*' for all files. First element of list used for reference pixel determination.
-var_input = ['./testimages/*.fits', './testimages_1/*.fits'] # Example: var_input = ['./path/to/some/fits/files/*.fits',  './path/to/some/more/fits/files/*.fits', './path/to/some/even/more/fits/files/*.fits']
+var_input = ['./testimages/*.fits'] # Example: var_input = ['./path/to/some/fits/files/*.fits',  './path/to/some/more/fits/files/*.fits', './path/to/some/even/more/fits/files/*.fits']
 
 # Path to directory for the output images
 var_output = './output'   
