@@ -26,7 +26,7 @@ Check if aligned image name already exists (append int to end?)
 
 
 class _Constants:
-    _VERSION = "v1.0.0"
+    _VERSION = "v1.0.1"
     _MAX_MODES = 2
     _REFERENCE_ROUNDING_ACCURACY = 2
     _CASA_COMMANDS_FILE_NAME = "brats_casa_commands.py"
