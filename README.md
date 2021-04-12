@@ -4,7 +4,7 @@ Automatic pixel-based alignment tool for radio images for use in the creation of
 
 If you have made use of this script, please cite Harwood, Vernstrom & Stroe 2019, MNRAS 491 803.
 
-**Note this is the CASA region file version. If you are using DS9 style region files, there is a seperate (easier to use) version available**
+**Note this is the CASA region file version. If you are using DS9 style region files, there is a seperate (easier to use) version available.**
 
 This has primarily been created for use with the Broadband Radio Astronomy Tools (BRATS) but is a stand alone module and so can be used for any alignment purposes.
 
