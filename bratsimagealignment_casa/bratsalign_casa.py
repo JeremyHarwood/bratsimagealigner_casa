@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 
 # -*- coding: utf-8 -*-
 
 # Created by Jeremy. J. Harwood (2019)
@@ -10,11 +10,11 @@
 # Change the var_ variables at the top of the script to suit your setup
 # The script should be run in CASA using either exec() or the -C command line argument
 
+####################################################################################################################################################
+
 import os, glob, scipy.ndimage, sys, subprocess, pickle
 import numpy as np
 from astropy.io import fits
-#from astropy.wcs import utils
-#import regions
 
 '''
 TODO List:

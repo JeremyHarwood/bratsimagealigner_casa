@@ -33,7 +33,7 @@
 # bia.Setup(input_files:list, region_files:list, output_dir="./", mode=2, reference_image=0, reference_location=[1024.0, 1024.0], residual_region=0, casa_path="/soft/casapy/bin/casa", overwrite_files=False):
 
 import traceback
-import bratsalign as bia
+import bratsalign_casa as bia
 
 # List of paths and file names of the images to align. Use '*' for all files. First element of list used for reference pixel determination.
 var_input = ['./testimages/*.fits', './testimages_1/*.fits'] # Example: var_input = ['./path/to/some/fits/files/*.fits',  './path/to/some/more/fits/files/*.fits', './path/to/some/even/more/fits/files/*.fits']
