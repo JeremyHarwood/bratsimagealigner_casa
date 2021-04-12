@@ -4,7 +4,7 @@ Automatic pixel-based alignment tool for radio images for use in the creation of
 
 If you have made use of this script, please cite Harwood, Vernstrom & Stroe 2019, MNRAS 491 803.
 
-**Note this is the CASA region file version. If you are using DS9 style region files, there is a seperate (easier to use) version available.**
+**Note this is the CASA region file version. If you are using DS9 style region files, there is a separate (easier to use) version available.**
 
 This has primarily been created for use with the Broadband Radio Astronomy Tools (BRATS) but is a stand alone module and so can be used for any alignment purposes.
 
@@ -17,7 +17,7 @@ The module aligned images based the peak of Gaussians fitted to the specified re
 - Ensure from the output the min, max, and mean offsets are to an acceptable level of accuracy.
 
 Where it is not practicable for all images to be align on a single point source, multiple runs should be performed. Staged approach:
-- Align an intiial set of images in the standard manner.
+- Align an intial set of images in the standard manner.
 - Either manually or via a coded loop align the second set of images to the **aligned set** using a secondary point source via one of the following options:
   - Option 1: Set "mode=0" and "reference_image" to the index of the previously aligned image.
   - Option 2: Manually obtain the Gaussian peak of the previously aligned image, and use "mode=1" with "reference_location" set to the peak value.
